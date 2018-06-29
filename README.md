@@ -11,13 +11,13 @@ The functions provided by the service are as follows -
 
 ### Assumptions made 
 ---
-Venue consists of rows, each row having n seats.
-Seats are assigned in the rows based on availability with best seats facing the stage.
+1. Venue consists of rows, each row having n seats.
+2. Seats are assigned in the rows based on availability with best seats facing the stage.
 ---
 
 ### Configuration
 ---
-The venue row and seat limit is configurable, so is the hold duration. For the purpose of this demo, pre-configured values are as follows - 
+The venue row and seat limit is configurable, so is the hold duration. For the purpose of this demo, pre-configured values are as follows 
 1. Venue Rows - 5
 2. Venue Seats - 20 per Row
 3. Hold Duration - 50 seconds
