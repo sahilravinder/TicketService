@@ -10,22 +10,21 @@ public class SeatMap {
         initializeSeatMap(numSeats, totalRows);
     }
 
-    public Set<Seat> getSeatMap() {
+    private Set<Seat> getSeatMap() {
         return seatMap;
     }
 
-    public List<Integer> getRows() {
-        return this.seatMap.stream().map(x -> x.getRowNum()).distinct().collect(Collectors.toList());
+    private List<Integer> getRows() {
+        return this.seatMap.stream().map(Seat::getRowNum).distinct().collect(Collectors.toList());
     }
 
     public List<Seat> getSeatsByStatus(SeatStatus seatSeatStatus) {
         return this.seatMap.stream().filter(x -> x.getSeatStatus() == seatSeatStatus).collect(Collectors.toList());
     }
 
-    public List<Seat> getSeatInfoForRow(int row) {
+    private List<Seat> getSeatInfoForRow(int row) {
         return this.seatMap.stream().filter(x -> x.getRowNum() == row).collect(Collectors.toList());
     }
-
 
     public Integer getAvailableSeats() {
         return (int)this.getSeatMap().stream().filter(x -> x.getSeatStatus() == SeatStatus.AVAILABLE).count();
@@ -37,7 +36,7 @@ public class SeatMap {
 
             for (int i = 1; i <= totalRows; i++) {
                 for(int j = 1; j <= numSeats; j ++ ) {
-                    this.seatMap.add(new Seat(i, j, SeatStatus.AVAILABLE));
+                    this.seatMap.add(new Seat(i, j));
                 }
             }
         }

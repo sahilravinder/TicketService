@@ -7,9 +7,8 @@ import org.walmart.service.TicketVendor;
 import org.walmart.service.TicketService;
 import java.util.Scanner;
 
-
-public class POS {
-    final static Logger logger = Logger.getLogger(POS.class);
+class POS {
+    private final static Logger logger = Logger.getLogger(POS.class);
 
     public static void main(String[] args) {
         //Configure a Seating layout for the venue

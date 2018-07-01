@@ -1,14 +1,13 @@
 package org.walmart.model;
 
 public class Seat  {
-    private int rowNum;
-    private int seatNum;
-    private SeatStatus seatStatus;
+    private final int rowNum;
+    private final int seatNum;
+    private SeatStatus seatStatus = SeatStatus.AVAILABLE;
 
-    public Seat(int rowNum, int seatNum, SeatStatus seatStatus) {
+    Seat(int rowNum, int seatNum) {
         this.rowNum = rowNum;
         this.seatNum = seatNum;
-        this.seatStatus = seatStatus;
     }
 
     public int getRowNum() {

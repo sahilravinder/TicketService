@@ -1,5 +1,5 @@
 # TicketService
-Walmart Labs coding challenge
+Wal-Mart Labs coding challenge
 
 Implementation of a Simple Ticket Service that facilitates the discovery, temporary hold and final reservation of seats within a high-demand performance venue
 
@@ -7,7 +7,7 @@ The functions provided by the service are as follows -
 
 1. Find the number of available seats within the venue.
 2. Find and hold the best available seats on behalf of a customer.
-3. Reserve and committ a specific group of held seats for a customer.
+3. Reserve and commit a specific group of held seats for a customer.
 
 ### Assumptions made 
 ---

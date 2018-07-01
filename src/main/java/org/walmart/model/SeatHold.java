@@ -6,6 +6,7 @@ public class SeatHold {
     private int seatHoldId;
     private List<Seat> heldSeats;
     private String customerEmail;
+    private long heldTime;
 
     public List<Seat> getHeldSeats() {
         return heldSeats;
@@ -29,6 +30,14 @@ public class SeatHold {
 
     public Integer getSeatHoldId() {
         return this.seatHoldId;
+    }
+
+    public long getHeldTime() {
+        return heldTime;
+    }
+
+    public void setHeldTime(long heldTime) {
+        this.heldTime = heldTime;
     }
 
     private boolean isValidHold() {
@@ -55,4 +64,6 @@ public class SeatHold {
         }
         return messageBuilder.toString();
     }
+
+
 }

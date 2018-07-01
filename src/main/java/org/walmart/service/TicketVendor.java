@@ -1,32 +1,45 @@
 package org.walmart.service;
 
 import org.apache.log4j.Logger;
+import org.walmart.jobs.TicketExpiration;
 import org.walmart.model.Seat;
 import org.walmart.model.SeatHold;
 import org.walmart.model.SeatMap;
 import org.walmart.model.SeatStatus;
 
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TicketVendor implements TicketService {
-    final static Logger logger = Logger.getLogger(TicketVendor.class);
+    private final static Logger logger = Logger.getLogger(TicketVendor.class);
 
-    private SeatMap seatMap;
-    private int holdDuration = 5;
-    private Map<Integer, SeatHold> seatsHeld = new HashMap<>();
-    private Map<Integer, Timer> customerHoldTimer = new HashMap<>();
-    private static AtomicInteger seatHoldId = new AtomicInteger(0);
+    private final SeatMap seatMap;
+    private final int holdDuration;
+    private final Map<Integer, SeatHold> seatsHeld = new ConcurrentHashMap<>();
+    private static final AtomicInteger seatHoldId = new AtomicInteger(0);
 
     public TicketVendor(SeatMap seatMap, int holdDuration) {
         this.seatMap = seatMap;
         this.holdDuration = holdDuration;
+        this.startTicketExpirationJob();
     }
 
+    private void startTicketExpirationJob() {
+        ScheduledExecutorService scheduledExecutorService =
+                Executors.newScheduledThreadPool(1);
+        scheduledExecutorService.scheduleWithFixedDelay(new TicketExpiration(this.seatsHeld, holdDuration),
+                0,
+                1,
+                TimeUnit.SECONDS);
+    }
+
+    @Override
     public int numSeatsAvailable() {
         return this.seatMap.getAvailableSeats();
     }
 
+    @Override
     public SeatHold findAndHoldSeats(int numSeats, String customerEmail) {
         //Check if hold is already placed by customer
         SeatHold seatHold = new SeatHold();
@@ -46,19 +59,15 @@ public class TicketVendor implements TicketService {
                     break;
             }
 
+            seatHold.setHeldTime(System.nanoTime());
             seatHold.setHeldSeats(seatsBooked);
             seatHold.setSeatHoldId(seatHoldId.incrementAndGet());
             seatsHeld.put(seatHold.getSeatHoldId(), seatHold);
-
-            if (!customerHoldTimer.keySet().contains(seatHold.getSeatHoldId())) {
-                Timer holdTimer = new Timer();
-                holdTimer.schedule(new ExpireTask(seatHold.getSeatHoldId()), holdDuration * 1000);
-                customerHoldTimer.put(seatHold.getSeatHoldId(), holdTimer);
-            }
         }
         return seatHold;
     }
 
+    @Override
     public String reserveSeats(int seatHoldId, String customerEmail) {
         logger.info(String.format("Requested to RESERVE Seats with [ID:%d] by [%s]", seatHoldId, customerEmail));
         String confirmationMessage;
@@ -67,44 +76,17 @@ public class TicketVendor implements TicketService {
             if (!seatHold.getCustomerEmail().equals(customerEmail)) {
                 return "Cannot find Customer with provided email. Please try again";
             }
-            if (seatHold != null) { //Checking if seat hold hasn't expired
-                for (Seat seat : seatHold.getHeldSeats()) {
-                    seat.setSeatStatus(SeatStatus.RESERVED);
-                }
-                //Clean up
-                cleanup(seatHoldId);
-                confirmationMessage = String.format("Seats RESERVED for [ID:%d] by [%s]", seatHoldId, customerEmail);
-            } else {
-                confirmationMessage = String.format("[ID:%d] HOLD expired, please try again", seatHoldId);
+            //Checking if seat hold hasn't expired
+            for (Seat seat : seatHold.getHeldSeats()) {
+                seat.setSeatStatus(SeatStatus.RESERVED);
             }
+            //Clean up
+            seatsHeld.remove(seatHoldId);
+            confirmationMessage = String.format("Seats RESERVED for [ID:%d] by [%s]", seatHoldId, customerEmail);
         } else {
             confirmationMessage = String.format("[ID:%d] doesn't exist, please try again", seatHoldId);
         }
         return confirmationMessage;
-    }
-
-    private void cleanup(int seatHoldId) {
-        this.customerHoldTimer.get(seatHoldId).cancel();  //Terminate the timer thread
-        this.seatsHeld.remove(seatHoldId); //Un-hold seats
-        this.customerHoldTimer.remove(seatHoldId);  //Remove timer
-    }
-
-    class ExpireTask extends TimerTask {
-
-        private int seatHoldId;
-
-        public ExpireTask(int seatHoldId) {
-            this.seatHoldId = seatHoldId;
-        }
-
-        public void run() {
-            logger.info(String.format("%d seconds of inactivity, Tickets will now be RELEASED for [ID: %d]", holdDuration, seatHoldId));
-            for (Seat seat : seatsHeld.get(seatHoldId).getHeldSeats()) {
-                seat.setSeatStatus(SeatStatus.AVAILABLE);
-            }
-            //Clean up
-            cleanup(seatHoldId);
-        }
     }
 
 }
