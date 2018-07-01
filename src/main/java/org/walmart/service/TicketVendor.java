@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class TicketVendor implements TicketService {
+public class TicketVendor implements TicketService  {
     private final static Logger logger = Logger.getLogger(TicketVendor.class);
 
     private final SeatMap seatMap;
