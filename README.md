@@ -9,7 +9,7 @@ The functions provided by the service are as follows -
 2. Find and hold the best available seats on behalf of a customer.
 3. Reserve and commit a specific group of held seats for a customer.
 
-### Assumptions made 
+## Assumptions made 
 ---
 * Seat Hold will expire in 10 seconds and held seats will be released.
 * There are 5 Rows, each containing 20 Seats. 
@@ -25,7 +25,7 @@ The functions provided by the service are as follows -
   
 * Ticket service implementation accepts a pre-defined SeatMap and holdDuration value configurable during initialization(see impl. below). The service also initiates a scheduled executor job to release tickets that have been held for more than defined holdDuration. 
     
-#### Service Initialization    
+## Service Initialization    
 
 ```java
  //Assign a seat layout
@@ -37,7 +37,7 @@ The functions provided by the service are as follows -
  TicketService ticketService = new TicketVendor(seatMap, holdDuration);
 ```
 
-### Testing and Building
+## Testing and Building
 
 * Test with:
 ``` shellsession
