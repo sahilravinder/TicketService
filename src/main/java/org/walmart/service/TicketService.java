@@ -2,7 +2,9 @@ package org.walmart.service;
 
 import org.walmart.model.SeatHold;
 
-public interface TicketService {
+import java.io.Closeable;
+
+public interface TicketService extends Closeable {
     /**
      * The number of seats in the venue that are neither held nor reserved
      *

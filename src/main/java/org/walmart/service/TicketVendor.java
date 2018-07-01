@@ -8,7 +8,10 @@ import org.walmart.model.SeatMap;
 import org.walmart.model.SeatStatus;
 
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TicketVendor implements TicketService  {
@@ -16,6 +19,7 @@ public class TicketVendor implements TicketService  {
 
     private final SeatMap seatMap;
     private final int holdDuration;
+    private ScheduledExecutorService scheduledExecutorService;
     private final Map<Integer, SeatHold> seatsHeld = new ConcurrentHashMap<>();
     private static final AtomicInteger seatHoldId = new AtomicInteger(0);
 
@@ -26,12 +30,26 @@ public class TicketVendor implements TicketService  {
     }
 
     private void startTicketExpirationJob() {
-        ScheduledExecutorService scheduledExecutorService =
+        scheduledExecutorService =
                 Executors.newScheduledThreadPool(1);
         scheduledExecutorService.scheduleWithFixedDelay(new TicketExpiration(this.seatsHeld, holdDuration),
                 0,
                 1,
                 TimeUnit.SECONDS);
+    }
+
+    @Override
+    public void close() {
+        if (scheduledExecutorService != null) {
+            scheduledExecutorService.shutdown();
+            try {
+                if (!scheduledExecutorService.awaitTermination(5000, TimeUnit.MILLISECONDS)) {
+                    logger.info("Timed out waiting for Ticket Expiration task to shut down, exiting uncleanly");
+                }
+            } catch (InterruptedException e) {
+                logger.error("Interrupted during shutdown, exiting uncleanly");
+            }
+        }
     }
 
     @Override

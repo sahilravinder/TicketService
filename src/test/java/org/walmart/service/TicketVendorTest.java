@@ -1,25 +1,32 @@
 package org.walmart.service;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.Before;
+import org.junit.*;
 import org.walmart.model.Seat;
 import org.walmart.model.SeatHold;
 import org.walmart.model.SeatMap;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 public class TicketVendorTest {
     private TicketService ticketService = null;
-    private static final int holdDuration = 10;
 
     @Before
     public void beforeTest() {
         //Assign a seat layout
         SeatMap seatMap = new SeatMap(20, 5);
+        int holdDuration = 10;
         ticketService = new TicketVendor(seatMap, holdDuration);
+    }
+
+    @After
+    public void afterTest() {
+        try {
+            ticketService.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
