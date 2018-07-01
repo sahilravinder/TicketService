@@ -9,25 +9,49 @@ The functions provided by the service are as follows -
 2. Find and hold the best available seats on behalf of a customer.
 3. Reserve and commit a specific group of held seats for a customer.
 
-### Assumptions made 
+## Assumptions made 
 ---
-1. Venue consists of rows, each row having n seats.
-2. Seats are assigned in the rows based on availability with best seats facing the stage.
----
-
-### Configuration
----
-The venue row and seat limit is configurable, so is the hold duration. For the purpose of this demo, pre-configured values are as follows 
-1. Venue Rows - 5
-2. Venue Seats - 20 per Row
-3. Hold Duration - 50 seconds
+* Seat Hold will expire in 10 seconds and held seats will be released.
+* There are 5 Rows, each containing 20 Seats. 
 ---
 
-### Components
----
-1. Java Version - 1.8
-2. Testing - Junit
-3. Logging - log4j
----
+## Implementation Notes
 
+* The data model consists of - 
+  1. SeatMap - The Venue with an array of Seat object (resembling a venue with NxN seating arrangement)
+  2. Seat - Seat attributes namely RowNum, SeatNum and SeatStatus 
+  3. SeatHold - Seat Hold info namely SeatHoldId, List<Seat>, CustomerEmail and HeldTime. 
+  4. SeatStatus(enum) - Applicable statuses of AVAILABLE, HOLD or RESERVED.
+  
+* Ticket service implementation accepts a pre-defined SeatMap and holdDuration value configurable during initialization(see impl. below). The service also initiates a scheduled executor job to release tickets that have been held for more than defined holdDuration. 
+    
+## Service Initialization    
 
+```java
+ //Assign a seat layout
+ SeatMap seatMap = new SeatMap(20, 5); //Initialize with 5 rows, each having 20 seats
+  
+  //Assign hold duration(seconds) for TicketService
+ int holdDuration = 5;
+ 
+ TicketService ticketService = new TicketVendor(seatMap, holdDuration);
+```
+
+## Testing and Building
+
+* Test with:
+``` shellsession
+$ ./gradlew test
+```
+
+* Build a JAR with
+``` shellsession
+$ ./gradlew jar
+...
+$ ls -1 build/libs
+TicketService-1.0-SNAPSHOT.jar
+```
+
+Lack of License
+==
+This software is not licensed. Do not distribute.
