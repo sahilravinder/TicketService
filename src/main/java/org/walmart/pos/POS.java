@@ -1,4 +1,4 @@
-package org.walmart.org.walmart.pos;
+package org.walmart.pos;
 
 import org.apache.log4j.Logger;
 import org.walmart.model.SeatHold;
