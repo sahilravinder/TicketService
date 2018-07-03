@@ -21,7 +21,7 @@ public class TicketExpiration implements Runnable {
     @Override
     public void run() {
         try {
-            for (SeatHold seatHold : this.seatsHeld.values()) {
+            this.seatsHeld.values().parallelStream().forEach((seatHold) -> {
                 if (isExpired(seatHold.getHeldTime())) {
                     //Clean up
                     logger.info(String.format("%d seconds of inactivity, Tickets will now be RELEASED for [ID:%d]", holdDuration, seatHold.getSeatHoldId()));
@@ -30,12 +30,10 @@ public class TicketExpiration implements Runnable {
                     }
                     seatsHeld.remove(seatHold.getSeatHoldId());
                 }
-            }
-        }
-        catch (Exception e) {
+            });
+        } catch (Exception e) {
             logger.error("Exception in scheduled Ticket Expiration task", e);
         }
-
     }
 
     private boolean isExpired(long holdTime) {
