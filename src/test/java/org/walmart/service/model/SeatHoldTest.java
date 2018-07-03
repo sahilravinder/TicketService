@@ -55,6 +55,12 @@ public class SeatHoldTest {
         Assert.assertNotEquals(System.nanoTime(), seatHeldTime);
     }
 
+    @Test
+    public void printSeatHoldStatus() {
+        String seatHoldMesasge = "Seat HOLD for [abc@xyz.com] [ID:999] Seats[ {1, 1} {1, 2} {1, 3} {1, 4} {1, 5} ]";
+        Assert.assertTrue(seatHold.toString().length() > 0);
+        Assert.assertEquals(seatHoldMesasge, seatHold.toString());
+    }
 
 }
 

@@ -75,7 +75,6 @@ public class TicketVendor implements TicketService  {
                 if (numSeats == 0)
                     break;
             }
-
             seatHold.setHeldTime(System.currentTimeMillis());
             seatHold.setHeldSeats(seatsBooked);
             seatHold.setSeatHoldId(seatHoldId.incrementAndGet());
