@@ -1,9 +1,11 @@
-package org.walmart.service;
+package org.walmart.service.service;
 
 import org.junit.*;
 import org.walmart.model.Seat;
 import org.walmart.model.SeatHold;
 import org.walmart.model.SeatMap;
+import org.walmart.service.TicketService;
+import org.walmart.service.TicketVendor;
 
 import java.io.IOException;
 import java.util.ArrayList;

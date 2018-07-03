@@ -59,7 +59,6 @@ public class TicketVendor implements TicketService  {
 
     @Override
     public SeatHold findAndHoldSeats(int numSeats, String customerEmail) {
-        //Check if hold is already placed by customer
         SeatHold seatHold = new SeatHold();
         seatHold.setCustomerEmail(customerEmail);
 
@@ -77,7 +76,7 @@ public class TicketVendor implements TicketService  {
                     break;
             }
 
-            seatHold.setHeldTime(System.nanoTime());
+            seatHold.setHeldTime(System.currentTimeMillis());
             seatHold.setHeldSeats(seatsBooked);
             seatHold.setSeatHoldId(seatHoldId.incrementAndGet());
             seatsHeld.put(seatHold.getSeatHoldId(), seatHold);

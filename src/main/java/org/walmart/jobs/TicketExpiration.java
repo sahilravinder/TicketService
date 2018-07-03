@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TicketExpiration implements Runnable {
     private final static Logger logger = Logger.getLogger(TicketExpiration.class);
-    private final Map<Integer, SeatHold>seatsHeld;
+    private final Map<Integer, SeatHold> seatsHeld;
     private final int holdDuration;
 
     public TicketExpiration(Map<Integer, SeatHold> seatsHeld, int holdDuration) {
@@ -39,9 +39,9 @@ public class TicketExpiration implements Runnable {
     }
 
     private boolean isExpired(long holdTime) {
-        long currentTime = System.nanoTime();
+        long currentTime = System.currentTimeMillis();
         long elapsed = currentTime - holdTime;
-        long elapsedSeconds = TimeUnit.SECONDS.convert(elapsed, TimeUnit.NANOSECONDS);
+        long elapsedSeconds = TimeUnit.SECONDS.convert(elapsed, TimeUnit.MILLISECONDS);
         return elapsedSeconds > holdDuration;
     }
 }

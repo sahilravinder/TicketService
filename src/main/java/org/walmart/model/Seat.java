@@ -5,7 +5,7 @@ public class Seat  {
     private final int seatNum;
     private SeatStatus seatStatus = SeatStatus.AVAILABLE;
 
-    Seat(int rowNum, int seatNum) {
+    public Seat(int rowNum, int seatNum) {
         this.rowNum = rowNum;
         this.seatNum = seatNum;
     }
